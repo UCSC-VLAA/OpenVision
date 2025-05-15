@@ -4,6 +4,15 @@ from urllib.request import urlopen
 from PIL import Image
 from open_clip import create_model_from_pretrained, get_tokenizer
 
+# === Local model loading ===
+# Path to the local pretrained weights (.bin file) downloaded from HuggingFace or elsewhere
+# ckpt_path = "/Path/to/your/local/ckpt"
+# model, preprocess = create_model_from_pretrained(
+#     model_name="openvision-vit-large-patch14-224",
+#     pretrained=ckpt_path,  
+#     device="cuda" if torch.cuda.is_available() else "cpu"
+# )
+
 model, preprocess = create_model_from_pretrained('hf-hub:UCSC-VLAA/openvision-vit-large-patch14-224')
 tokenizer = get_tokenizer('hf-hub:UCSC-VLAA/openvision-vit-large-patch14-224')
 

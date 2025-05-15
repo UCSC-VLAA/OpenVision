@@ -41,12 +41,22 @@ def _rescan_model_configs():
         elif config_path.is_dir():
             for ext in config_ext:
                 config_files.extend(config_path.glob(f'*{ext}'))
-
     for cf in config_files:
         with open(cf, 'r') as f:
-            model_cfg = json.load(f)
+            config = json.load(f)
+            
+        if "model_cfg" in config:
+            model_cfg = config["model_cfg"]
             if all(a in model_cfg for a in ('embed_dim', 'vision_cfg', 'text_cfg')):
-                _MODEL_CONFIGS[cf.stem] = model_cfg
+                _MODEL_CONFIGS[cf.stem] = {
+                    "model_cfg": model_cfg,
+                    "preprocess_cfg": config.get("preprocess_cfg", {})
+                }
+        elif all(a in config for a in ('embed_dim', 'vision_cfg', 'text_cfg')):
+            _MODEL_CONFIGS[cf.stem] = {
+                "model_cfg": config,
+                "preprocess_cfg": {}
+            }
 
     _MODEL_CONFIGS = {k: v for k, v in sorted(_MODEL_CONFIGS.items(), key=lambda x: _natural_key(x[0]))}
 
@@ -214,7 +224,12 @@ def create_model(
     else:
         model_name = model_name.replace('/', '-')  # for callers using old naming with / in ViT names
         checkpoint_path = None
-        model_cfg = None
+        model_data = get_model_config(model_name)
+        if model_data is not None:
+            model_cfg = model_data['model_cfg']
+            preprocess_cfg = merge_preprocess_dict(preprocess_cfg, model_data.get('preprocess_cfg', {}))
+        else:
+            raise RuntimeError(f'Model config for {model_name} not found.')
 
     if isinstance(device, str):
         device = torch.device(device)

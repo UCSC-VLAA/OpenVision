@@ -1,0 +1,53 @@
+{
+  "model_cfg": {
+    "embed_dim": 1152,
+    "vision_cfg": {
+      "image_size": 84,
+      "layers": 27,
+      "width": 1152,
+      "patch_size": 14,
+      "no_ln_pre": true,
+      "pool_type": "avg",
+      "final_ln_after_pool": true,
+      "norm_kwargs": {
+        "eps": 1e-06
+      },
+      "head_width": 72,
+      "mlp_ratio": 3.7362
+    },
+    "text_cfg": {
+      "context_length": 80,
+      "vocab_size": 32000,
+      "hf_tokenizer_name": "bert-base-uncased",
+      "tokenizer_kwargs": {
+        "strip_sep_token": true
+      },
+      "width": 1152,
+      "heads": 16,
+      "layers": 27,
+      "pool_type": "last",
+      "no_causal_mask": true,
+      "act_kwargs": {
+        "approximate": "tanh"
+      },
+      "norm_kwargs": {
+        "eps": 1e-06
+      },
+      "mlp_ratio": 3.7362
+    }
+  },
+  "preprocess_cfg": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "interpolation": "bilinear",
+    "resize_mode": "squash"
+  }
+}
