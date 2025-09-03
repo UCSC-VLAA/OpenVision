@@ -494,3 +494,135 @@ def create_model_from_pretrained(
     )
 
     return model, preprocess
+
+
+import torch
+from typing import Any, Dict, Optional, Tuple, Union
+
+def create_vision_encoder_and_transforms(
+        model_name: str,
+        pretrained: Optional[str] = None,
+        precision: str = 'fp32',
+        device: Union[str, torch.device] = 'cpu',
+        jit: bool = False,
+        force_image_size: Optional[Union[int, Tuple[int, int]]] = None,
+        image_mean: Optional[Tuple[float, ...]] = None,
+        image_std: Optional[Tuple[float, ...]] = None,
+        image_interpolation: Optional[str] = None,
+        image_resize_mode: Optional[str] = None,  # only effective for inference
+        aug_cfg: Optional[Union[Dict[str, Any], 'AugmentationCfg']] = None,
+        pretrained_image: bool = False,
+        cache_dir: Optional[str] = None,
+        **model_kwargs,
+):
+    """
+    Creates a vision encoder model and its corresponding image transforms.
+    This version correctly handles models from Hugging Face Hub.
+    """
+    # Import necessary components from the open_clip library
+    # (Ensure these imports are accessible from where you place this function)
+    from .model import _build_vision_tower, get_cast_dtype
+    from .pretrained import get_pretrained_cfg, download_pretrained
+    from .transform import image_transform_v2, PreprocessCfg, merge_preprocess_kwargs, merge_preprocess_dict
+    from .factory import get_model_config, list_models, _get_hf_config, HF_HUB_PREFIX
+    from .factory import load_state_dict, list_pretrained_tags_by_model
+    import logging
+    import os
+    from dataclasses import asdict
+
+    force_preprocess_cfg = merge_preprocess_kwargs(
+        {}, mean=image_mean, std=image_std, interpolation=image_interpolation, resize_mode=image_resize_mode)
+
+    if model_name.startswith(HF_HUB_PREFIX):
+        model_id = model_name[len(HF_HUB_PREFIX):]
+        config = _get_hf_config(model_id, cache_dir=cache_dir)
+        model_cfg = config['model_cfg']
+        if pretrained is None:
+            pretrained = 'hf'
+    else:
+        model_cfg = get_model_config(model_name)
+
+    if model_cfg is None:
+        logging.error(f'Model config for {model_name} not found; available models {list_models()}.')
+        raise RuntimeError(f'Model config for {model_name} not found.')
+
+    vision_cfg = model_cfg['vision_cfg']
+    embed_dim = model_cfg['embed_dim']
+
+    if force_image_size is not None:
+        vision_cfg['image_size'] = force_image_size
+    
+    is_timm_model = 'timm_model_name' in vision_cfg
+    if pretrained_image:
+        if is_timm_model:
+            vision_cfg['timm_model_pretrained'] = True
+        else:
+            assert False, 'pretrained image towers currently only supported for timm models'
+
+    cast_dtype = get_cast_dtype(precision)
+    vision_encoder = _build_vision_tower(
+        embed_dim=embed_dim,
+        vision_cfg=vision_cfg,
+        cast_dtype=cast_dtype
+    )
+    
+    if isinstance(device, str):
+        device = torch.device(device)
+    vision_encoder.to(device=device)
+
+    if precision in ("fp16", "bf16"):
+        dtype = torch.float16 if 'fp16' in precision else torch.bfloat16
+        vision_encoder.to(dtype=dtype)
+
+    if pretrained:
+        checkpoint_path = ''
+        if model_name.startswith(HF_HUB_PREFIX):
+            from .pretrained import download_pretrained_from_hf
+            checkpoint_path = download_pretrained_from_hf(model_id, cache_dir=cache_dir)
+            pretrained_cfg = _get_hf_config(model_id, cache_dir=cache_dir)
+        else:
+            pretrained_cfg = get_pretrained_cfg(model_name, pretrained)
+            if pretrained_cfg:
+                checkpoint_path = download_pretrained(pretrained_cfg, cache_dir=cache_dir)
+            elif os.path.exists(pretrained):
+                checkpoint_path = pretrained
+
+        if checkpoint_path:
+            logging.info(f'Loading pretrained {model_name} weights from {checkpoint_path}.')
+            state_dict = load_state_dict(checkpoint_path)
+            
+            if any(k.startswith('visual.') for k in state_dict.keys()):
+                 visual_state_dict = {k.replace('visual.', ''): v for k, v in state_dict.items() if k.startswith('visual.')}
+            else:
+                 visual_state_dict = state_dict
+
+            vision_encoder.load_state_dict(visual_state_dict, strict=True)
+        else:
+            error_str = (
+                f'Pretrained weights ({pretrained}) not found for model {model_name}.'
+                f' Available pretrained tags ({list_pretrained_tags_by_model(model_name)}.')
+            logging.warning(error_str)
+            raise RuntimeError(error_str)
+    
+    if jit:
+        vision_encoder = torch.jit.script(vision_encoder)
+
+    # The following transform creation logic is commented out as in the original code.
+    # You can uncomment and adapt it if you need the transform objects.
+    
+    # pp_cfg = asdict(PreprocessCfg())
+    # if 'preprocess_cfg' in locals().get('config', {}):
+    #     pp_cfg = merge_preprocess_dict(pp_cfg, config['preprocess_cfg'])
+    # elif 'pretrained_cfg' in locals() and pretrained_cfg:
+    #      pp_cfg = merge_preprocess_dict(pp_cfg, pretrained_cfg)
+
+    # if force_image_size:
+    #     force_preprocess_cfg['size'] = force_image_size
+    # pp_cfg = merge_preprocess_dict(pp_cfg, force_preprocess_cfg)
+    
+    # preprocess_train = image_transform_v2(pp_cfg, is_train=True, aug_cfg=aug_cfg)
+    # preprocess_val = image_transform_v2(pp_cfg, is_train=False)
+
+    return vision_encoder
+
+    # return vision_encoder, preprocess_train, preprocess_val

@@ -1,18 +1,63 @@
-# OpenVision <img src="assets/icon.png" width="36"> : A Fully-Open, Cost-Effective Family of Advanced Vision Encoders for Multimodal Learning
+# OpenVision <img src="assets/icon.png" width="36"> & OpenVision 2 <img src="assets/openvision_v1.5_logo.png" width="36">
+
+### OpenVision: A Fully-Open, Cost-Effective Family of Advanced Vision Encoders for Multimodal Learning  
+### OpenVision 2: A Family of Generative Pretrained Visual Encoders for Multimodal Learning 
 
 <p align="center">
-  🌐 <a href="https://ucsc-vlaa.github.io/OpenVision/" target="_blank">Project Page</a>  
+  🌐 <a href="https://ucsc-vlaa.github.io/OpenVision/" target="_blank">OpenVision Project Page</a>  
   • <img src="./assets/ar.svg" alt="Arxiv Logo" style="height: 1em; vertical-align: middle; margin-right: 0.3em;">
   <a href="https://arxiv.org/abs/2505.04601" target="_blank">Arxiv</a>  
-  • 💻  <a href="https://github.com/UCSC-VLAA/OpenVision" target="_blank">Code</a>  
-   • <img src="./assets/hg.svg" alt="Hugging Face Logo" style="height: 1em; vertical-align: middle; margin-right: 0.3em;">
-  <a href="https://huggingface.co/collections/UCSC-VLAA/openvision-681a4c27ee1f66411b4ae919" target="_blank">OpenVision Family</a>  
-
+  • 💻 <a href="https://github.com/UCSC-VLAA/OpenVision" target="_blank">Code</a>  
+  • <img src="./assets/hg.svg" alt="Hugging Face Logo" style="height: 1em; vertical-align: middle; margin-right: 0.3em;">
+  <a href="https://huggingface.co/collections/UCSC-VLAA/openvision-681a4c27ee1f66411b4ae919" target="_blank">OpenVision Collection</a>  
 </p>
 
-This repository contains the code for training and fine-tuning vision-language models based on the OpenVision framework. It provides a scalable and efficient approach to training multimodal models on TPU infrastructure.
+<p align="center">
+  🌐 <a href="https://ucsc-vlaa.github.io/OpenVision2/" target="_blank">OpenVision 2 Project Page</a>  
+  • <img src="./assets/ar.svg" alt="Arxiv Logo" style="height: 1em; vertical-align: middle; margin-right: 0.3em;">
+  <a href="https://arxiv.org/abs/2509.01644" target="_blank">Arxiv</a>  
+  • 💻 <a href="https://github.com/UCSC-VLAA/OpenVision" target="_blank">Code</a>  
+  • <img src="./assets/hg.svg" alt="Hugging Face Logo" style="height: 1em; vertical-align: middle; margin-right: 0.3em;">
+  <a href="https://huggingface.co/collections/UCSC-VLAA/openvision-2-68ab5934fe21f3fc463077da" target="_blank">OpenVision 2 Collection</a>  
+</p>
 
-## Features
+This repository contains the code for training and fine-tuning vision-language models based on the **OpenVision framework**. It now supports both the original **contrastive + generative training (OpenVision)** and the simplified **caption-only generative training (OpenVision 2)**, providing efficient and scalable approaches to multimodal learning on TPU infrastructure.
+
+## 🚀 Recent Updates
+
+### September 2025
+- Released **OpenVision 2**: a simplified, generative-only version of OpenVision that **removes the text encoder and contrastive loss**, keeping only the captioning objective.  
+- OpenVision 2 achieves:
+  - **1.5–2× faster training**
+  - **~1.8× lower memory footprint**
+  - Supports scaling up to **1B+ parameters**
+  - Maintains or improves performance on multimodal benchmarks (OCR, TextVQA, ChartQA, MME, etc.).
+
+### May 2025
+- Released **OpenVision** models and training code.
+
+---
+
+## 🧩 OpenVision 2 at a Glance
+
+- **Architecture**: Vision Encoder (ViT) + Text Decoder (no text encoder)  
+- **Training Objective**: Caption-only autoregressive generation  
+- **Key Optimizations**:
+  - Dual-stage CLIPA-style training (low → high resolution)
+  - Synthetic captions from **ReCap-DataComp-1B v2** (LLaMA-3-powered, conditioned on alt-text)
+  - Visual token masking (keep ~25–35% tokens) for efficiency  
+- **Efficiency**:
+  - ViT-L/14 @224: Training time reduced from **83h → 57h**, memory **24.5GB → 13.8GB**
+  - SoViT-400M/14 @384: Training time **241h → 121h**, memory **27.4GB → 14.5GB**
+  - Enables larger batch size on TPU v4
+
+<p align="center">
+  <img src="assets/openvision2_teaser.png" width="850">
+</p>
+
+---
+
+## 📦 Core Features (Shared by OpenVision & OpenVision 2)
 
 - Optimized for Google Cloud TPU training
 - Supports various encoder architectures (ViT models of different sizes)
@@ -20,18 +65,71 @@ This repository contains the code for training and fine-tuning vision-language m
 - Supports pre-training and multi-stage fine-tuning 
 - Compatible with CLIP-style vision-language training
 
+---
+
+## 📖 OpenVision (Original)
+
+- **Training Objective**: Contrastive (CLIP-style) + Generative (captioning)  
+- **Highlights**:
+  - Strong performance across multimodal benchmarks
+  - Public release of both code and pretrained weights
+  - Serves as the foundation for OpenVision 2  
+
 <p align="center">
   <img src="assets/openvision_teaser_v1.3.png" width="580">
 </p>
 
-## Recent Updates
+---
 
-### May 2025
-- Released OpenVision models + Training Code
+## 📊 Model Zoo (OpenVision 2)
+
+### OpenVision 2 Performance on Multimodal Benchmarks
+
+| Method             | Vision Encoder     | Params | Res | TextVQA | ChartQA | OCR | MME   | SEED | SQA  | GQA  | POPE |
+|--------------------|--------------------|--------|-----|---------|---------|-----|-------|------|------|------|------|
+| OpenVision         | L/14               | 304M   | 224 | 57.7    | 13.9    | 315 | 1487  | 69.5 | 73.6 | 62.9 | 86.4 |
+| **OpenVision 2**   | L/14               | 304M   | 224 | **59.0** | 13.7   | **327** | 1460 | 69.3 | 76.5 | 62.6 | 87.1 |
+| OpenVision         | L/14               | 304M   | 336 | 61.2    | 15.7    | 339 | 1525  | 70.5 | 75.1 | 63.7 | 87.2 |
+| **OpenVision 2**   | L/14               | 304M   | 336 | **63.0** | 14.5   | **357** | 1486 | 70.1 | 77.5 | 63.0 | 87.7 |
+| OpenVision         | SoViT-400M/14      | 400M   | 384 | 62.4    | 16.1    | 357 | 1493  | 70.4 | 72.4 | 63.8 | 88.0 |
+| **OpenVision 2**   | SoViT-400M/14      | 400M   | 384 | **64.3** | 15.0   | **387** | 1472 | 70.7 | 74.9 | 63.5 | 87.5 |
+| **OpenVision 2**   | H/14               | 632M   | 224 | 60.2    | 13.5    | 340 | 1470  | 69.3 | 75.4 | 62.5 | 87.2 |
+| **OpenVision 2**   | H/14               | 632M   | 336 | 63.4    | 16.3    | 391 | 1470  | 70.6 | 76.4 | 63.1 | 88.4 |
+| **OpenVision 2**   | H/14               | 632M   | 448 | 65.6    | 18.1    | 416 | 1499  | 70.6 | 75.6 | 63.1 | 88.7 |
+| **OpenVision 2**   | g/14               | 1.01B  | 224 | 60.2    | 13.7    | 338 | 1469  | 69.3 | 75.0 | 62.6 | 86.9 |
 
 
+Full collection: [Hugging Face – OpenVision 2](https://huggingface.co/collections/UCSC-VLAA/openvision-2-68ab5934fe21f3fc463077da)
 
-## Model ZOO
+---
+## 🔧 How to Load Converted Vision Encoder
+
+You can directly load and use the vision encoder as follows:
+
+### PyTorch (via OpenCLIP)
+```python
+import torch
+from open_clip.factory import create_vision_encoder_and_transforms
+
+# Replace with your uploaded repo name
+hf_repo = "UCSC-VLAA/openvision2-vit-large-patch14-224-vision-only"
+
+# Load converted vision encoder
+vision_encoder = create_vision_encoder_and_transforms(
+    model_name=f"hf-hub:{hf_repo}"
+)
+
+# Run inference
+vision_encoder.eval()
+dummy_image_pt = torch.ones((1, 3, 224, 224))
+with torch.no_grad():
+    _, patch_features = vision_encoder(dummy_image_pt)
+
+print("Patch feature shape:", patch_features.shape)
+```
+
+
+## 📊 Model Zoo (OpenVision)
 
 ### Vision Encoder Performance on ImageNet-1K
 
@@ -256,6 +354,14 @@ If you find our work useful to your research and applications, please consider c
   title   = {OpenVision: A Fully-Open, Cost-Effective Family of Advanced Vision Encoders for Multimodal Learning},
   author  = {Li, Xianhang and Liu, Yanqing and Tu, Haoqin and Zhu, Hongru and Xie, Cihang},
   journal = {arXiv preprint arXiv:2505.04601},
+  year    = {2025}
+}
+```
+```bibtex
+@article{liu2025openvision2,
+  title   = {OpenVision 2: A Family of Generative Pretrained Visual Encoders for Multimodal Learning},
+  author  = {Liu, Yanqing and Li, Xianhang and Zhang, Letian and Wang, Zirui and Zheng, Zeyu and Zhou, Yuyin and Xie, Cihang},
+  journal = {arXiv preprint arXiv:2509.01644},
   year    = {2025}
 }
 ```

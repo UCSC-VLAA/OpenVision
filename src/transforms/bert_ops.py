@@ -591,6 +591,88 @@ def get_pp_custom_bert_tokenize(vocab_path, max_len, output_token_len, sample_if
   return _pp_custom_bert_tokenize
 
 
+@Registry.register("preprocess_ops.my_bert_tokenize_v2")
+def get_pp_custom_bert_tokenize(vocab_path, max_len, sample_if_multi=True,
+                                add_bos=False, add_eos=False, key='txt'):
+  """Extracts tokens with tensorflow_text.BertTokenizer.
+  Add custom args for coca training.
+
+  Args:
+    vocab_path: Path to a file containing the vocabulry for the WordPiece
+      tokenizer. It's the "vocab.txt" file in the zip file downloaded from
+      the original repo https://github.com/google-research/bert
+    max_len: Number of tokens after tokenization.
+    sample_if_multi: Whether the first text should be taken (if set to `False`),
+      or whether a random text should be tokenized.
+
+  Returns:
+    A preprocessing Op.
+  """
+
+  temp_list = \
+    _create_bert_tokenizer(vocab_path, add_bos=add_bos, add_eos=add_eos)
+  cur_idx = 2
+  cls_token, tokenizer = temp_list[:cur_idx]
+  if add_bos:
+    bos_token = temp_list[cur_idx]
+    cur_idx += 1
+  if add_eos:
+    eos_token = temp_list[cur_idx]
+    cur_idx += 1
+
+  def _pp_custom_bert_tokenize(data):
+    labels = data[key]
+
+    # Ensure labels are at least 1-D by expanding dims if necessary
+    labels = tf.reshape(labels, (-1,))  # reshape to ensure it is 1-D if necessary
+
+    labels = tf.concat([labels, [""]], axis=0)
+    if sample_if_multi:
+      num_texts = tf.maximum(tf.shape(labels)[0] - 1, 1)  # Don't sample "".
+      txt = labels[tf.random.uniform([], 0, num_texts, dtype=tf.int32)]
+    else:
+      txt = labels[0]  # Always works, since we append "" earlier on.
+
+    # Tokenize the selected sub-caption
+    token_ids = tokenizer.tokenize(txt[None])
+  
+    # Ensure token_ids are at least 1-D
+    token_ids = token_ids.merge_dims(1, -1) if token_ids.ragged_rank > 1 else token_ids
+    count = tf.shape(token_ids)[0]
+
+    # Add BOS, EOS, CLS tokens
+    if add_bos:
+        token_ids = tf.concat([tf.fill([count, 1], bos_token), token_ids], axis=1)
+    if add_eos:
+        token_ids = tf.concat([token_ids, tf.fill([count, 1], eos_token)], axis=1)
+
+    padded_token_ids, pad_mask = tensorflow_text.pad_model_inputs(
+        token_ids, max_len - 1)
+  
+    def func1(): return tf.concat([padded_token_ids[:, :-1], tf.fill([count, 1], eos_token)], axis=1)
+    def func2(): return padded_token_ids
+    padded_token_ids = tf.cond(tf.equal(pad_mask[0, -1], tf.constant(1)), func1, func2)
+  
+    padded_token_ids = tf.concat([padded_token_ids, tf.fill([count, 1], cls_token)], axis=1)
+
+    # Step 5: Save the selected sub-caption and mask in data
+    data["labels"] = padded_token_ids[0]
+
+    cap_loss_mask = pad_mask
+    if add_bos:
+      cap_loss_mask = cap_loss_mask[:, 1:]
+      # shape consistent with input labels
+      cap_loss_mask = tf.concat([cap_loss_mask, tf.fill([count, 1], 0)], axis=1)
+
+    # Migrate cap_loss_mask for labels_for_regress
+    cap_loss_mask_for_regress = cap_loss_mask
+    data["cap_loss_mask"] = cap_loss_mask_for_regress[0]
+
+    return data
+
+  return _pp_custom_bert_tokenize
+
+
 @Registry.register("preprocess_ops.new_bert_tokenize")
 def get_pp_custom_bert_tokenize(vocab_path, max_len, output_token_len, sample_if_multi=True,
                                 add_bos=False, add_eos=False, key1='txt', key2='llava_caption'):
