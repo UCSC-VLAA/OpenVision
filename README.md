@@ -358,10 +358,10 @@ If you find our work useful to your research and applications, please consider c
 }
 ```
 ```bibtex
-@article{liu2025openvision2,
-  title   = {OpenVision 2: A Family of Generative Pretrained Visual Encoders for Multimodal Learning},
-  author  = {Liu, Yanqing and Li, Xianhang and Zhang, Letian and Wang, Zirui and Zheng, Zeyu and Zhou, Yuyin and Xie, Cihang},
+@article{liu2025openvision,
+  title = {OpenVision 2: A Family of Generative Pretrained Visual Encoders for Multimodal Learning},
+  author = {Liu, Yanqing and Li, Xianhang and Zhang, Letian and Wang, Zirui and Zheng, Zeyu and Zhou, Yuyin and Xie, Cihang},
   journal = {arXiv preprint arXiv:2509.01644},
-  year    = {2025}
+  year = {2025}
 }
 ```
