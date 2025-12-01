@@ -104,26 +104,27 @@ Full collection: [Hugging Face – OpenVision 2](https://huggingface.co/collecti
 ---
 ## 🔧 How to Load Converted Vision Encoder
 
-You can directly load and use the vision encoder as follows:
+**Note:**  
+OpenVision2 checkpoints require the **custom `open_clip` version included in this repository**.  
+The upstream `open_clip` pip package is not compatible.
 
-### PyTorch (via OpenCLIP)
+### Example
+
 ```python
 import torch
-from open_clip.factory import create_vision_encoder_and_transforms
+# Use the OpenVision2 version of open_clip
+from src.convert_upload.open_clip.factory import create_vision_encoder_and_transforms
 
-# Replace with your uploaded repo name
 hf_repo = "UCSC-VLAA/openvision2-vit-large-patch14-224-vision-only"
 
-# Load converted vision encoder
 vision_encoder = create_vision_encoder_and_transforms(
     model_name=f"hf-hub:{hf_repo}"
 )
 
-# Run inference
 vision_encoder.eval()
-dummy_image_pt = torch.ones((1, 3, 224, 224))
+dummy_image = torch.ones((1, 3, 224, 224))
 with torch.no_grad():
-    _, patch_features = vision_encoder(dummy_image_pt)
+    _, patch_features = vision_encoder(dummy_image)
 
 print("Patch feature shape:", patch_features.shape)
 ```
