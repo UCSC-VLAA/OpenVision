@@ -442,6 +442,7 @@ class VisionTransformer(nn.Module):
             layers: int,
             heads: int,
             mlp_ratio: float,
+            in_channels: int = 3,
             ls_init_value: float = None,
             attentional_pool: bool = False,
             attn_pooler_queries: int = 256,
@@ -466,7 +467,7 @@ class VisionTransformer(nn.Module):
         self.final_ln_after_pool = final_ln_after_pool  # currently ignored w/ attn pool enabled
         self.output_dim = output_dim
 
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=width, kernel_size=patch_size, stride=patch_size, bias=False)
+        self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=width, kernel_size=patch_size, stride=patch_size, bias=False)
 
         # class embeddings and positional embeddings
         scale = width ** -0.5

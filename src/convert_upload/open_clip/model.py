@@ -31,6 +31,7 @@ class CLIPVisionCfg:
     head_width: int = 64
     mlp_ratio: float = 4.0
     patch_size: int = 16
+    in_channels: int = 3
     image_size: Union[Tuple[int, int], int] = 224
 
     ls_init_value: Optional[float] = None  # layer scale initial value
@@ -153,6 +154,7 @@ def _build_vision_tower(
             layers=vision_cfg.layers,
             heads=vision_heads,
             mlp_ratio=vision_cfg.mlp_ratio,
+            in_channels=vision_cfg.in_channels,
             ls_init_value=vision_cfg.ls_init_value,
             patch_dropout=vision_cfg.patch_dropout,
             attentional_pool=vision_cfg.attentional_pool,
