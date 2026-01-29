@@ -1,8 +1,8 @@
-# OpenVision <img src="assets/icon.png" width="36"> & OpenVision 2 <img src="assets/openvision_v1.5_logo.png" width="36">
+# OpenVision <img src="assets/icon.png" width="36"> & OpenVision 2 <img src="assets/openvision_v1.5_logo.png" width="36"> & OpenVision 3 <img src="assets/openvision_3_logo.png" width="36">
 
 ### OpenVision: A Fully-Open, Cost-Effective Family of Advanced Vision Encoders for Multimodal Learning  
 ### OpenVision 2: A Family of Generative Pretrained Visual Encoders for Multimodal Learning 
-
+### 🌟 OpenVision 3: A Family of Unified Visual Encoder for Both Understanding and Generation 
 <p align="center">
   🌐 <a href="https://ucsc-vlaa.github.io/OpenVision/" target="_blank">OpenVision Project Page</a>  
   • <img src="./assets/ar.svg" alt="Arxiv Logo" style="height: 1em; vertical-align: middle; margin-right: 0.3em;">
@@ -21,9 +21,23 @@
   <a href="https://huggingface.co/collections/UCSC-VLAA/openvision-2-68ab5934fe21f3fc463077da" target="_blank">OpenVision 2 Collection</a>  
 </p>
 
-This repository contains the code for training and fine-tuning vision-language models based on the **OpenVision framework**. It now supports both the original **contrastive + generative training (OpenVision)** and the simplified **caption-only generative training (OpenVision 2)**, providing efficient and scalable approaches to multimodal learning on TPU infrastructure.
+
+<p align="center">
+  🌐 <a href="https://ucsc-vlaa.github.io/OpenVision3/" target="_blank">OpenVision 3 Project Page</a>  
+  • <img src="./assets/ar.svg" alt="Arxiv Logo" style="height: 1em; vertical-align: middle; margin-right: 0.3em;">
+  <a href="https://arxiv.org/abs/2601.15369" target="_blank">Arxiv</a>  
+  • 💻 <a href="https://github.com/UCSC-VLAA/OpenVision" target="_blank">Code</a>  
+  • <img src="./assets/hg.svg" alt="Hugging Face Logo" style="height: 1em; vertical-align: middle; margin-right: 0.3em;">
+  <a href="https://huggingface.co/collections/UCSC-VLAA/openvision-3" target="_blank">OpenVision 3 Collection</a>  
+</p>
+This repository contains the code for training and fine-tuning vision-language models based on the **OpenVision framework**. It now supports both the original **contrastive + generative training (OpenVision)**, the simplified **caption-only generative training (OpenVision 2)**, providing efficient and scalable approaches to multimodal learning on TPU infrastructure.
 
 ## 🚀 Recent Updates
+
+### January 2026
+- ✨ Released **OpenVision 3**: a unified visual encoder for both understanding and generation. 
+  - Please refer to the [script](https://github.com/UCSC-VLAA/OpenVision/blob/main/scripts/train_openvision_3.sh) for OpenVision 3 usage.
+  - The full training code will be released soon.
 
 ### September 2025
 - Released **OpenVision 2**: a simplified, generative-only version of OpenVision that **removes the text encoder and contrastive loss**, keeping only the captioning objective.  
