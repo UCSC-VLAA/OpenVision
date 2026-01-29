@@ -30,6 +30,7 @@
   • <img src="./assets/hg.svg" alt="Hugging Face Logo" style="height: 1em; vertical-align: middle; margin-right: 0.3em;">
   <a href="https://huggingface.co/collections/UCSC-VLAA/openvision-3" target="_blank">OpenVision 3 Collection</a>  
 </p>
+
 This repository contains the code for training and fine-tuning vision-language models based on the **OpenVision framework**. It now supports both the original **contrastive + generative training (OpenVision)**, the simplified **caption-only generative training (OpenVision 2)**, providing efficient and scalable approaches to multimodal learning on TPU infrastructure.
 
 ## 🚀 Recent Updates
@@ -382,5 +383,14 @@ If you find our work useful to your research and applications, please consider c
   author = {Liu, Yanqing and Li, Xianhang and Zhang, Letian and Wang, Zirui and Zheng, Zeyu and Zhou, Yuyin and Xie, Cihang},
   journal = {arXiv preprint arXiv:2509.01644},
   year = {2025}
+}
+```
+
+```bibtex
+@article{zhang2026openvision,
+  title   = {OpenVision 3: A Family of Unified Visual Encoder for Both Understanding and Generation},
+  author  = {Zhang, Letian and Ren, Sucheng and Liu, Yanqing and Li, Xianhang and Wang, Zeyu and Zhou, Yuyin and Yao, Huaxiu and Zheng, Zeyu and Nie, Weili and Liu, Guilin and Yu, Zhiding and Xie, Cihang},
+  journal = {arXiv preprint arXiv:2601.15369},
+  year    = {2026}
 }
 ```
