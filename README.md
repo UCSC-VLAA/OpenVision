@@ -344,8 +344,12 @@ The jax repo is built on [big vision](https://github.com/google-research/big_vis
 We've also borrowed some code from [TIMM](https://github.com/huggingface/pytorch-image-models) and [MAE](https://github.com/facebookresearch/mae).
 Many thanks to the awesome works from the open-source community!
 
-We are also very grateful that this work is partially supported by TPU Research Cloud (TRC) program, and Google Cloud Research Credits program.
+For computation, the OpenVision Project is mainly supported by TPU Research Cloud (TRC) program, and Google Cloud Research Credits program.
 
+OpenVision 3 is also partly supported by the National Center for Transportation Cybersecurity and Resiliency (TraCR) (a U.S. Department of Transportation National University
+Transportation Center) headquartered at Clemson University, Clemson, South Carolina, USA (USDOT Grant #69A3552344812). Any opinions, findings, conclusions,
+and recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of
+TraCR, and the U.S. Government assumes no liability for the contents or use thereof.
 
 ## Citation
 If you find our work useful to your research and applications, please consider citing the paper and staring the repo :)
