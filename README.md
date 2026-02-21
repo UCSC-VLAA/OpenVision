@@ -1,7 +1,5 @@
 # OpenVision Series
 
----
-
 ### <img src="assets/icon.png" width="24"> OpenVision (ICCV 2025)
 A Fully-Open, Cost-Effective Family of Advanced Vision Encoders for Multimodal Learning  
 
