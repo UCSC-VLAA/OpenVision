@@ -1,8 +1,15 @@
-# OpenVision <img src="assets/icon.png" width="36"> & OpenVision 2 <img src="assets/openvision_v1.5_logo.png" width="36"> & OpenVision 3 <img src="assets/openvision_3_logo.png" width="36">
+# OpenVision Series
 
-### OpenVision: A Fully-Open, Cost-Effective Family of Advanced Vision Encoders for Multimodal Learning  
-### OpenVision 2: A Family of Generative Pretrained Visual Encoders for Multimodal Learning 
-### 🌟 OpenVision 3: A Family of Unified Visual Encoder for Both Understanding and Generation 
+---
+
+### <img src="assets/icon.png" width="24"> OpenVision (ICCV 2025)
+A Fully-Open, Cost-Effective Family of Advanced Vision Encoders for Multimodal Learning  
+
+### <img src="assets/openvision_v1.5_logo.png" width="24"> OpenVision 2 (CVPR 2026)
+A Family of Generative Pretrained Visual Encoders for Multimodal Learning  
+
+### <img src="assets/openvision_3_logo.png" width="24"> OpenVision 3
+A Unified Visual Encoder for Both Understanding and Generation
 <p align="center">
   🌐 <a href="https://ucsc-vlaa.github.io/OpenVision/" target="_blank">OpenVision Project Page</a>  
   • <img src="./assets/ar.svg" alt="Arxiv Logo" style="height: 1em; vertical-align: middle; margin-right: 0.3em;">
